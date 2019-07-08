@@ -17,7 +17,7 @@ main.o: main.C Client.h Server.h
 	$(CXX) -c $(CXXFLAGS) $< -o $@ $(LDFLAGS)
 
 clean:
-	rm -f *.o core
+	rm -f *.o por
 
 #main: main.C Client.h Server.h
 #	$(CXX) $(CXXFLAGS) $main.C -o $@ $^

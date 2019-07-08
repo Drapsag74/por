@@ -2,7 +2,7 @@
 #include <iostream>
 
 Server::Server(Givaro::ModularBalanced<int64_t> & F, const Givaro::Integer & m, const Givaro::Integer & n):
-F(F), m(m), n(n) {
+F(F), _m(m), _n(n) {
     
 }
 
@@ -13,9 +13,8 @@ int Server::send(Givaro::ModularBalanced<long int>::Element_ptr M) {
 
 
 Givaro::ModularBalanced<long int>::Element_ptr Server::audit(Givaro::ModularBalanced<long int>::Element_ptr x) {
-    Givaro::ModularBalanced<long int>::Element_ptr y = FFLAS::fflas_new(F, 1, m);
-    std::cout << "Bar";
-    FFLAS::fgemm(F, FFLAS::FflasTrans, FFLAS::FflasNoTrans, m, 1, n, F.one, x, 1, M, n, F.zero, y, 1);
-    std::cout << "Fooo";
+    Givaro::ModularBalanced<long int>::Element_ptr y = FFLAS::fflas_new(F, 1, _n);
+    FFLAS::fgemm(F, FFLAS::FflasNoTrans, FFLAS::FflasNoTrans, 1, _n, _m, F.one, x, _m, M, _n, F.zero, y, _n);
+
     return y;
 }

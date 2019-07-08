@@ -9,11 +9,11 @@ class Server
 private:
     Givaro::ModularBalanced<int64_t>::Element_ptr M;    
     Givaro::ModularBalanced<int64_t> F;
-    const Givaro::Integer & m;
-    const Givaro::Integer & n;
+    const Givaro::Integer & _m;
+    const Givaro::Integer & _n;
 public:
     Server(Givaro::ModularBalanced<int64_t> & F, const Givaro::Integer & m, const Givaro::Integer & n);
-    Server(Server & serv) : F(serv.F), m(serv.m), n(serv.n) {
+    Server(Server & serv) : F(serv.F), _m(serv._m), _n(serv._n) {
         
     }
 
