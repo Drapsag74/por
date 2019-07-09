@@ -10,17 +10,18 @@
 
 class Client
 {
+    typedef Givaro::ModularBalanced<int64_t> Field;
 private:
 
-    Givaro::ModularBalanced<int64_t> F;
+    Field F;
     const Givaro::Integer & _m;
     const Givaro::Integer & _n;
-    Givaro::ModularBalanced<int64_t>::Element_ptr v;
-    Givaro::ModularBalanced<int64_t>::Element_ptr _u;
+    Field::Element_ptr v;
+    Field::Element_ptr _u;
     Server & server;
 
 public:
-    Client(Server & server, Givaro::ModularBalanced<int64_t> & F, Givaro::ModularBalanced<int64_t>::Element_ptr M, const Givaro::Integer & m, const Givaro::Integer & n);
+    Client(Server & server, Field & F, Field::Element_ptr M, const Givaro::Integer & m, const Givaro::Integer & n);
     
     bool audit();
 

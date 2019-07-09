@@ -6,19 +6,20 @@
 
 class Server
 {
+    typedef Givaro::ModularBalanced<int64_t> Field;
 private:
-    Givaro::ModularBalanced<int64_t>::Element_ptr M;    
-    Givaro::ModularBalanced<int64_t> F;
+    Field::Element_ptr M;    
+    Field F;
     const Givaro::Integer & _m;
     const Givaro::Integer & _n;
 public:
-    Server(Givaro::ModularBalanced<int64_t> & F, const Givaro::Integer & m, const Givaro::Integer & n);
+    Server(Field & F, const Givaro::Integer & m, const Givaro::Integer & n);
     Server(Server & serv) : F(serv.F), _m(serv._m), _n(serv._n) {
         
     }
 
-    int send(Givaro::ModularBalanced<int64_t>::Element_ptr M);    
-    Givaro::ModularBalanced<int64_t>::Element_ptr audit(Givaro::ModularBalanced<long int>::Element_ptr x);
+    int send(Field::Element_ptr M);    
+    Field::Element_ptr audit(Field::Element_ptr x);
 
     virtual ~Server(){}
 };
