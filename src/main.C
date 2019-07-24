@@ -9,15 +9,17 @@
 int main(int argc, char *argv[])
 {
     typedef Givaro::ModularBalanced<int64_t> Field;
-    Field F(2719307);
-    size_t m = 2<<30;
-    size_t n = 30;
-    Server s(F, m,n);
+    Givaro::Integer p(2719307);
+    Field F(p);
+    size_t m = 10;
+    size_t n = 5;
+    Server s(F, m,n,p);
     Field::Element_ptr M = FFLAS::fflas_new(F,m,n);
     typename Field::RandIter G(F,0);
     FFPACK::RandomMatrix(F, m, n, M, n,G);
 //    FFLAS::WriteMatrix(std::cout << "Matrice M : " << std::endl, F, m,n,M,n) << std::endl;
-    Client client = Client(s, F, M, m, n);
+    Client client = Client(s, F, M, m, n, p);
+    std::cout << client.audit() << std::endl;
     std::cout << client.audit() << std::endl;
     return 0;
 }

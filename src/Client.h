@@ -17,15 +17,16 @@ private:
     Field F;
     size_t _m;
     size_t _n;
+    Givaro::Integer _p;
     Field::Element_ptr v;
     Field::Element_ptr _u;
-    Field::Element_ptr _t;
+    Field::Element tau;
     Server & server;
     SMCStrassen::pub_key _pk;
     SMCStrassen::priv_key _k;
 
 public:
-    Client(Server & server, Field & F, Field::Element_ptr M, size_t  m, size_t n);
+    Client(Server & server, Field & F, Field::Element_ptr M, size_t  m, size_t n, Givaro::Integer p);
     
     bool audit();
 
