@@ -3,16 +3,17 @@
 #include "Server.h"
 #include "fflas-ffpack/fflas-ffpack.h"
 #include "givaro/modular.h"
-
+#include "MerkleTree.h"
 
 
 int main(int argc, char *argv[])
 {
     typedef Givaro::ModularBalanced<int64_t> Field;
+    MerkleTree t();
     Givaro::Integer p(2719307);
     Field F(p);
-    size_t m = 10;
-    size_t n = 5;
+    size_t m = 2<<10;
+    size_t n = 10;
     Server s(F, m,n,p);
     Field::Element_ptr M = FFLAS::fflas_new(F,m,n);
     typename Field::RandIter G(F,0);

@@ -85,10 +85,10 @@ bool Client::audit() {
     std::cout << "rtau : " << rtau << " r : " << r << " tau : " << tau << std::endl;
     //F.div(xt, (1 -Givaro::pow(rtau, _m)), 1 - rtau);
     //F.mul(xt, xt, rtau);
-    std::cout << "xt : " << rtau*((1-Givaro::pow(rtau, _m))/(1-rtau))  << " yu : " << yu[0] << std::endl;
+   // std::cout << "xt : " << rtau*((1-Givaro::pow(rtau, _m))/(1-rtau))  << " yu : " << yu[0] << std::endl;
     F.init(yu[0], yu[0] + rtau*((1-Givaro::pow(rtau, _m))/(1-rtau)));
 
-    std::cout << "xv : " << xv << " yu : " << yu[0] << std::endl;
+ //   std::cout << "xv : " << xv << " yu : " << yu[0] << std::endl;
     Field::Element_ptr x = FFLAS::fflas_new(F, 1, _m); 
     F.init(x[0], r);
     for(size_t i = 1; i < _m; i++) {
@@ -96,11 +96,11 @@ bool Client::audit() {
         F.mul(tmp, x[i-1], r);
         F.init(x[i],tmp);
     }
-
-    Field::Element_ptr xvt = FFLAS::fflas_new(F, 1,1);
-    FFLAS::fgemm(F, FFLAS::FflasNoTrans, FFLAS::FflasNoTrans, 1,1, _m, F.one, x, _m, v, 1, F.zero, xvt, 1);
-    FFLAS::WriteMatrix(std::cout << "vrais xvt : " << std::endl, F, 1,1, xvt, 1)<< std::endl;
-
  //   std::cout << "xv : " << xv << std::endl;
     return xv == yu[0];
 }
+
+//void Client::update(size_t i, size_t j) {
+//    coef = Server::request(i,j);
+//
+//}

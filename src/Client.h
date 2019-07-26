@@ -29,6 +29,7 @@ public:
     Client(Server & server, Field & F, Field::Element_ptr M, size_t  m, size_t n, Givaro::Integer p);
     
     bool audit();
+    void update(size_t i,size_t j);
 
     virtual ~Client(){}
 };
