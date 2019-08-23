@@ -24,10 +24,12 @@ Server::Field::Element_ptr Server::audit(Field::Element r, Givaro::Integer & del
     }
     Field::Element_ptr y = FFLAS::fflas_new(F, 1, _n);
     for (size_t i = 0; i < _m; i++) {
+        Givaro::Integer xi;
+        F.convert(xi, x[i]);
         if(x[i] < 0) {
-            delta = SMCStrassen::add_ciphers(delta, SMCStrassen::mul_ciphers(w[i], x[i] + _p, cipherSize), cipherSize);
+            delta = SMCStrassen::add_ciphers(delta, SMCStrassen::mul_ciphers(w[i], xi + _p, cipherSize), cipherSize);
         } else { 
-            delta = SMCStrassen::add_ciphers(delta, SMCStrassen::mul_ciphers(w[i], x[i], cipherSize), cipherSize);
+            delta = SMCStrassen::add_ciphers(delta, SMCStrassen::mul_ciphers(w[i], xi,cipherSize), cipherSize);
         }
     }
     FFLAS::fgemm(F, FFLAS::FflasNoTrans, FFLAS::FflasNoTrans, 1, _n, _m, F.one, x, _m, M, _n, F.zero, y, _n);

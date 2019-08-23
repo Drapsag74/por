@@ -41,13 +41,15 @@ server(server), F(F), _p(p) {
     for(size_t i=0; i < _m; i++) {
         std::cout << "progress : " << float(i)/float(m-1)*100.0 << " %\r";
         std::cout.flush();
-        if(v[i] < 0) {
-            Fcipher.init(w[i], SMCStrassen::encryption(_pk,v[i]  + p));
+        Givaro::Integer vi;
+        F.convert(vi,v[i]);
+        if(vi<0) {
+            Fcipher.init(w[i], SMCStrassen::encryption(_pk,vi + _p));
         } else {
-            Fcipher.init(w[i], SMCStrassen::encryption(_pk, v[i]));
+            Fcipher.init(w[i], SMCStrassen::encryption(_pk,vi));
         }
     }
-//    std::cout << std::endl;
+    std::cout << std::endl;
 //    for(size_t i=0; i < _m; i++) {
 //        std::cout << SMCStrassen::decryption(w[i], _pk, _k) << std::endl;
 //    }
@@ -77,26 +79,23 @@ bool Client::audit() {
 //    FFLAS::WriteMatrix(std::cout << "Vecteur yu : " << std::endl, F, 1,1, yu,1) << std::endl;
     Field::Element xv;
     F.init(xv, SMCStrassen::decryption(delta, _pk, _k));
+    Field::Element rtau;
+    F.mul(rtau, r, tau);
     Field::Element xt;
-    Givaro::Integer rc, tauc;
-    F.convert(rc, r);
-    F.convert(tauc, tau);
-    Givaro::Integer rtau = rc*tauc;
-    std::cout << "rtau : " << rtau << " r : " << r << " tau : " << tau << std::endl;
-    //F.div(xt, (1 -Givaro::pow(rtau, _m)), 1 - rtau);
-    //F.mul(xt, xt, rtau);
-   // std::cout << "xt : " << rtau*((1-Givaro::pow(rtau, _m))/(1-rtau))  << " yu : " << yu[0] << std::endl;
-    F.init(yu[0], yu[0] + rtau*((1-Givaro::pow(rtau, _m))/(1-rtau)));
+    F.init(xt, rtau);
+//    std::cout << "rtau : " << F.convert(rtau) << " r : " << r << " tau : " << tau << std::endl;
+    Field::Element tmp;
+    F.add(tmp, -1, Givaro::pow(rtau, _m));
+    F.mulin(xt, tmp);
+    F.add(tmp, -1, rtau);
+    F.divin(xt, tmp);
+//    std::cout << "xt : " <<   << " yu : " << yu[0] << std::endl;
+    F.addin(yu[0],xt);
+//    F.init(yu[0], F.addin(yu[0] + rtau*((1-Givaro::pow(rtau, _m))/(1-rtau)));
 
  //   std::cout << "xv : " << xv << " yu : " << yu[0] << std::endl;
-    Field::Element_ptr x = FFLAS::fflas_new(F, 1, _m); 
-    F.init(x[0], r);
-    for(size_t i = 1; i < _m; i++) {
-        Field::Element tmp;
-        F.mul(tmp, x[i-1], r);
-        F.init(x[i],tmp);
-    }
  //   std::cout << "xv : " << xv << std::endl;
+
     return xv == yu[0];
 }
 

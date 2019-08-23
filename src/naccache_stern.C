@@ -42,7 +42,7 @@ bool contains(std::vector<Integer> a, Integer e){
      * respectively stores them in ``pub_key``, ``priv_key`` */
 void keyGen(priv_key& privKey, pub_key& pubKey, int size){
     privKey.k = 20;
-    privKey.sizeK = 32;
+    privKey.sizeK = 16;
     if((privKey.k/2)*privKey.sizeK>size){
         std::cout << "Error! k NB_BLOCKS or BLOCK_SIZE too large wrt size" << std::endl;
     }
@@ -135,7 +135,7 @@ void keyGen(priv_key& privKey, pub_key& pubKey, int size){
 void shared_block_size_key_gen(priv_key& privKey, pub_key& pubKey, int size, std::vector<Integer> & shared_elems){
     size_t nb_blocks = 20;
     privKey.k = nb_blocks;
-    privKey.sizeK = 32;
+    privKey.sizeK = 16;
     Givaro::Integer u = shared_elems[nb_blocks];
     Givaro::Integer v = shared_elems[nb_blocks+1];
     Givaro::Integer sigma = shared_elems[nb_blocks+2];

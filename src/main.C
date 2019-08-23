@@ -8,7 +8,7 @@
 
 int main(int argc, char *argv[])
 {
-    typedef Givaro::ModularBalanced<int64_t> Field;
+    typedef Givaro::ModularBalanced<double> Field;
     MerkleTree t();
     Givaro::Integer p(2719307);
     Field F(p);

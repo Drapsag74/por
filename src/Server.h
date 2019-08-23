@@ -6,7 +6,7 @@
 
 class Server
 {
-    typedef Givaro::ModularBalanced<int64_t> Field;
+    typedef Givaro::ModularBalanced<double> Field;
 private:
     Field::Element_ptr M;
     Givaro::Modular<Givaro::Integer>::Element_ptr w;
