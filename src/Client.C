@@ -1,6 +1,7 @@
 #include "Client.h"
 #include <iostream>
 #include <givaro/givintnumtheo.h>
+#include <time.h>
 
 Client::Client(Server & server, Field & F, Field::Element_ptr M, size_t m, size_t n, Givaro::Integer p) :
 server(server), F(F), _p(p) {
@@ -39,8 +40,10 @@ server(server), F(F), _p(p) {
     Givaro::Modular<Givaro::Integer> Fcipher(_pk.n);
     Givaro::Modular<Givaro::Integer>::Element_ptr w = FFLAS::fflas_new(Fcipher, _m, 1);
     for(size_t i=0; i < _m; i++) {
-        std::cout << "progress : " << float(i)/float(m-1)*100.0 << " %\r";
-        std::cout.flush();
+        if(i%(100) == 0) {
+            std::cout << "progress : " << float(i)/float(m-1)*100.0 << " %\r";
+            std::cout.flush();
+        }
         Givaro::Integer vi;
         F.convert(vi,v[i]);
         if(vi<0) {
@@ -64,16 +67,19 @@ server(server), F(F), _p(p) {
 
 bool Client::audit() {
     std::cout << "Begin audit" << std::endl;
+    clock_t t1 = clock();
     Field::Element r;
     typename Field::RandIter G(F,0);
     F.random(G, r);
-    
 //    FFLAS::WriteMatrix(std::cout << "vecteur x : " << std::endl,F, 1, _m, x, _m) << std::endl;
     Givaro::Integer delta = SMCStrassen::encryption(_pk, Givaro::Integer(0));
+    clock_t t2 = clock();
+    clock_t elapsed_other = t2 - t1;
     std::cout << "Waiting for the server" << std::endl;
     Field::Element_ptr y = server.audit(r, delta);
     std::cout << "got y" << std::endl;
 //    FFLAS::WriteMatrix(std::cout << "y : " << std::endl, F, 1, _n, y, _n) << std::endl;
+    t1 = clock();
     Field::Element_ptr yu = FFLAS::fflas_new(F, 1, 1);
     FFLAS::fgemm(F, FFLAS::FflasNoTrans, FFLAS::FflasNoTrans, 1,1,_n, F.one, y, _n, _u,1, F.zero, yu,1);
 //    FFLAS::WriteMatrix(std::cout << "Vecteur yu : " << std::endl, F, 1,1, yu,1) << std::endl;
@@ -85,9 +91,11 @@ bool Client::audit() {
     F.init(xt, rtau);
 //    std::cout << "rtau : " << F.convert(rtau) << " r : " << r << " tau : " << tau << std::endl;
     Field::Element tmp;
-    F.add(tmp, -1, Givaro::pow(rtau, _m));
+    Field::Element rtaui;
+    F.convert(rtaui, rtau);
+    F.add(tmp, F.mOne, Givaro::powmod(rtaui, _m%(_p-1),_p));
     F.mulin(xt, tmp);
-    F.add(tmp, -1, rtau);
+    F.add(tmp, F.mOne, rtau);
     F.divin(xt, tmp);
 //    std::cout << "xt : " <<   << " yu : " << yu[0] << std::endl;
     F.addin(yu[0],xt);
@@ -96,6 +104,14 @@ bool Client::audit() {
  //   std::cout << "xv : " << xv << " yu : " << yu[0] << std::endl;
  //   std::cout << "xv : " << xv << std::endl;
 
+    Givaro::Integer ri, taui, xti;
+    F.convert(ri, r);
+    F.convert(taui, tau);
+    F.convert(xti,xt);
+    t2 = clock();
+    elapsed_other += t2 - t1;
+    std::cout << "time for other : " << elapsed_other/(CLOCKS_PER_SEC) << std::endl;
+    std::cout << "r : " << ri << " tau : " << taui << " rtau : " << rtaui << " xt : " << xti << std::endl;
     return xv == yu[0];
 }
 

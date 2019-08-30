@@ -3,7 +3,7 @@ CXXFLAGS+=`pkg-config fflas-ffpack --cflags`
 LDFLAGS=`pkg-config givaro --libs`
 LDFLAGS+=`pkg-config fflas-ffpack --libs`
 LDFLAGS+= -lssl -lcrypto
-CXXFLAGS+= -O2 -march=native
+CXXFLAGS+= -O2 -march=native -g
 EXEC = por
 SRC=$(wildcard *.C)
 OBJ=$(SRC:.C=.o)
@@ -13,9 +13,9 @@ all: $(EXEC)
 por: $(OBJ)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
-main.o: main.C Client.h Server.h naccache_stern.h
+main.o: main.C Client.h Server.h naccache_stern.h PorTools.h
 	$(CXX) -c $(CXXFLAGS) $< -o main.o $(LDFLAGS)
-	
+
 %.o:%.C
 	$(CXX) -c $(CXXFLAGS) $< -o $@ $(LDFLAGS)
 
